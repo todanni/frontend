@@ -1,0 +1,48 @@
+name: Front End
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    ## checks out our project source code
+    - uses: actions/checkout@v2
+    
+    ## Builds our docker image!
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag front-end:dev
+
+    ## Publishes our image to Docker Hub 😎
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        ## the name of our image
+        name: forbsey/go-api
+        ## Here we pass in our Docker Username
+        username: ${{ secrets.DOCKER_USERNAME }}
+        ## and our Docker password which 
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    ## Run
+    - name: Deploy package to digitalocean
+      uses: appleboy/ssh-action@master
+      env:
+          GITHUB_USERNAME: danni-popova
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        host: ${{ secrets.DEV_DO_DROPLET_IP }}
+        username: root
+        key: ${{ secrets.ADMIN_SSH_KEY }}
+        script: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p "${{ secrets.DOCKER_PASSWORD }}"
+          docker pull ${{ github.repository }}:latest
+          docker run -d \ 
+          --name ${{ github.event.repository.name }} ${{ github.repository }} \
+          --label "traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)" \ 
+          --label "traefik.http.routers.${{ github.event.repository.name }}.tls=true" \ 
+          --label "traefik.http.routers.${{ github.event.repository.name }}.tls.certresolver=letsencrypt" \ 
+          --label "traefik.http.routers.${{ github.event.repository.name }}.middlewares=https-redirect@docker"
+    
