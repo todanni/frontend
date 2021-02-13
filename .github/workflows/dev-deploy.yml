@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
 
-jobs:
+jobs:  
   build:
     runs-on: ubuntu-latest
     steps:
@@ -36,13 +36,40 @@ jobs:
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-    ## Run
+      ## Send result to discord
       - 
-       name: Deploy package to digitalocean
+        name: Send discord failure message
+        if: ${{ failure() }}
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          color: "#FF0000"
+          message: "Failed to build Dev Images for ${{ github.repository }} \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
+
+      - 
+        name: Send discord success message
+        if: ${{ success() }}
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          color: "#48f442"
+          message: "Dev Images built for ${{ github.repository }}. \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
+    
+          
+     ## Send result to discord
+  run:
+   runs-on: ubuntu-latest
+   steps: 
+          ## Run
+      - 
+       name: Run 
        uses: appleboy/ssh-action@master
        env:
           GITHUB_USERNAME: danni-popova
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ## Traefik labels
           HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
           MIDDLEWARE_LABEL: traefik.http.routers.${{ github.event.repository.name }}.middlewares=https-redirect@docker
           TLS_HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
@@ -58,7 +85,6 @@ jobs:
           docker pull ${{ github.repository }}:latest
           docker rm -f ${{ github.event.repository.name }} 
           docker run -d --name ${{ github.event.repository.name }} --network ${{ secrets.NETWORK }} --label "$HOST_LABEL" --label "$TLS_LABEL" --label "$TLS_CERT_LABEL" --label "$MIDDLEWARE_LABEL" --label "$TLS_HOST_LABEL" ${{ github.repository }}
-          
       - 
         name: Send discord failure message
         if: ${{ failure() }}
@@ -67,7 +93,7 @@ jobs:
           webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
           color: "#FF0000"
-          message: "Failed to build and push Dev Images for ${{ github.repository }} \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
+          message: "Failed to run Dev images for ${{ github.repository }} \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
 
       - 
         name: Send discord success message
@@ -77,6 +103,5 @@ jobs:
           webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
           color: "#48f442"
-          message: "Dev Images built and pushed for ${{ github.repository }}. \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
-
+          message: "Dev is now running latest images for ${{ github.repository }}. \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
     
