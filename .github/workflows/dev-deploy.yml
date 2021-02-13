@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  main:
+  build:
     runs-on: ubuntu-latest
     steps:
       -
@@ -36,6 +36,29 @@ jobs:
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
+    ## Run
+      - 
+       name: Deploy package to digitalocean
+       uses: appleboy/ssh-action@master
+       env:
+          GITHUB_USERNAME: danni-popova
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
+          MIDDLEWARE_LABEL: traefik.http.routers.${{ github.event.repository.name }}.middlewares=https-redirect@docker
+          TLS_HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
+          TLS_CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.certresolver=letsencrypt
+          TLS_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.tls=true
+       with:
+        host: ${{ secrets.DEV_DO_DROPLET_IP }}
+        username: root
+        key: ${{ secrets.ADMIN_SSH_KEY }}
+        envs:  HOST_LABEL,MIDDLEWARE_LABEL,TLS_HOST_LABEL,TLS_CERT_LABEL,TLS_LABEL
+        script: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p "${{ secrets.DOCKER_PASSWORD }}"
+          docker pull ${{ github.repository }}:latest
+          docker rm -f ${{ github.event.repository.name }} 
+          docker run -d --name ${{ github.event.repository.name }} --network ${{ secrets.NETWORK }} --label "$HOST_LABEL" --label "$TLS_LABEL" --label "$TLS_CERT_LABEL" --label "$MIDDLEWARE_LABEL" --label "$TLS_HOST_LABEL" ${{ github.repository }}
+          
       - 
         name: Send discord failure message
         if: ${{ failure() }}
@@ -57,24 +80,3 @@ jobs:
           message: "Dev Images built and pushed for ${{ github.repository }}. \n https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
 
     
-    ## Run
-      - 
-       name: Deploy package to digitalocean
-       uses: appleboy/ssh-action@master
-       env:
-          GITHUB_USERNAME: danni-popova
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TLS_LABEL: traefik.http.routers.${{ github.event.repository.name }}.tls=true
-          HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
-          CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}.tls.certresolver=letsencrypt
-          MIDDLEWARE_LABEL: traefik.http.routers.${{ github.event.repository.name }}.middlewares=https-redirect@docker
-       with:
-        host: ${{ secrets.DEV_DO_DROPLET_IP }}
-        username: root
-        key: ${{ secrets.ADMIN_SSH_KEY }}
-        envs: TLS_LABEL,HOST_LABEL,CERT_LABEL,MIDDLEWARE_LABEL
-        script: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p "${{ secrets.DOCKER_PASSWORD }}"
-          docker pull ${{ github.repository }}:latest
-          docker rm -f ${{ github.event.repository.name }} 
-          docker run -d --name ${{ github.event.repository.name }} --network orchestrate_default --label "$HOST_LABEL" --label "$TLS_LABEL" --label "$CERT_LABEL" --label "$MIDDLEWARE_LABEL" ${{ github.repository }}
