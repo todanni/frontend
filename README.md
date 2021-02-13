@@ -41,13 +41,14 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://todanni-6969.web.app/)
+[![Product Name Screen Shot][product-screenshot]](https://todanni.com/)
 
 ### Built With
 
-* [Go]()
-* [React]()
-* [Docker]()
+* [React](https://reactjs.org/)
+* [Material UI](https://material-ui.com/)
+* [Redux](https://redux.js.org/)
+* [Mirage JS](https://miragejs.com/)
 
 
 <!-- GETTING STARTED -->
@@ -62,26 +63,28 @@ To get a local copy up and running follow these simple steps.
 This is an example of how to list things you need to use the software and how to install them.
 * npm
 ```sh
-npm install npm@latest -g
+yarn
 ```
 
 ### Installation
 
 1. Clone the repo
 ```sh
-git clone https://github.com/danni-popova/todanni.git
+git clone git@github.com:todanni/frontend.git
 ```
-2. Install NPM packages
+2. Install packages
 ```sh
-npm install
+yarn
 ```
-
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+To run this locally:
+```sh
+yarn start
+```
 
 _For more examples, please refer to the [Documentation](https://documenter.getpostman.com/view/4194169/TVK77LqV)_
 
@@ -115,15 +118,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Danni Popova -  danni.develop@gmail.com
+Danni Popova - danni.develop@gmail.com
 
-Project Link: [https://github.com/danni-popova/todanni](https://github.com/danni-popova/todanni)
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-Special thanks to "The Dan Row" for helping when stuck and enduring my stupid questions.
-* [Dan Richards](https://github.com/danmrichards)
-* [Andy Daniel](https://github.com/ajdaniel)
+Project Link: [https://github.com/todanni/frontend](https://github.com/danni-popova/todanni)
 
 
 
