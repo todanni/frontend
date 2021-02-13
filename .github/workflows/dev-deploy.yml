@@ -46,7 +46,7 @@ jobs:
           HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
           MIDDLEWARE_LABEL: traefik.http.routers.${{ github.event.repository.name }}.middlewares=https-redirect@docker
           TLS_HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
-          TLS_CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.certresolver=letsencrypt
+          TLS_CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.tls.certresolver=letsencrypt
           TLS_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.tls=true
        with:
         host: ${{ secrets.DEV_DO_DROPLET_IP }}
