@@ -76,4 +76,5 @@ jobs:
         script: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p "${{ secrets.DOCKER_PASSWORD }}"
           docker pull ${{ github.repository }}:latest
+          docker rm --name ${{ github.event.repository.name }}
           docker run -d --name ${{ github.event.repository.name }} --label "$HOST_LABEL" --label "$TLS_LABEL" --label "$CERT_LABEL" --label "$MIDDLEWARE_LABEL" ${{ github.repository }}
