@@ -21,3 +21,9 @@ yarn-debug.log*
 yarn-error.log*
 /.eslintcache
 
+
+/.idea/.gitignore
+/.idea/frontend.iml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/modules.xml
+/.idea/vcs.xml
