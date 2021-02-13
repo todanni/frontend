@@ -1,10 +1,10 @@
-name: Front End
+name: Build and deploy to dev
 
 on:
   push:
     branches: [ main ]
 
-jobs:  
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
