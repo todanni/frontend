@@ -1,20 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
-import {useParams} from "react-router-dom";
 import {Box, Button, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import axios from "axios";
-import {getTasks} from "../tasks/tasksSlice";
 
 export default function Verify(props) {
     const classes = useStyles();
-    // let {code} = useParams();
-    //
-
-    const [status, setStatus] = useState('loading');
 
     useEffect(() => {
-        verifyEmail()
+        // send verify request using the code
     }, [])
 
     return (
@@ -54,8 +47,3 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }))
-
-const verifyEmail = async () => {
-    const response = await axios.get(`/api/account/verify`);
-    console.log(response)
-}
