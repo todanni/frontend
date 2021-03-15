@@ -5,6 +5,7 @@ import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 import Dashboard from "./components/Dashboard";
 import Login from "./pages/login";
 import SignUp from "./pages/register";
+import Verify from "./pages/verify/VerifiedEmail";
 
 const theme = createMuiTheme({
     palette: {
@@ -29,9 +30,10 @@ function App() {
             <Router>
                 <div>
                     <Switch>
-                        <Route path="/" component={Dashboard}/>
                         <Route exact path="/login" component={Login}/>
                         <Route exact path="/signup" component={SignUp}/>
+                        <Route exact path="/verify/:code" component={Verify}/>
+                        <Route path="/" component={Dashboard}/>
                     </Switch>
                 </div>
             </Router>

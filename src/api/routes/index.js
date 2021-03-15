@@ -20,4 +20,13 @@ export default function routes() {
         },
     )
 
+    this.get("/account/verify", (schema, request) => {})
+
+    this.get("/account/verify/:code", (schema, request) => {
+        return new Response(
+            200,
+            { some: "header" },
+            { errors: ["name cannot be blank"] }
+        )
+    })
 }
