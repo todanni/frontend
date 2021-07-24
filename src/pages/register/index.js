@@ -9,7 +9,6 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-
 import axios from "axios";
 import useStyles from './styles';
 import {emailRegex} from "../../utils/regex";

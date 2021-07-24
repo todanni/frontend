@@ -19,5 +19,4 @@ export default function routes() {
             return schema.requests.all();
         },
     )
-
 }
