@@ -1,6 +1,7 @@
 name: Build and deploy to dev
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -74,6 +75,7 @@ jobs:
           HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
           TLS_LABEL: traefik.http.routers.${{ github.event.repository.name }}.tls=true
           CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}.tls.certresolver=letsencrypt
+          ENABLE_LABEL: traefik.enable=true
        with:
         host: ${{ secrets.DEV_DO_DROPLET_IP }}
         username: root
@@ -83,7 +85,7 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p "${{ secrets.DOCKER_PASSWORD }}"
           docker pull ${{ github.repository }}:latest
           docker rm -f ${{ github.event.repository.name }} 
-          docker run -d --name ${{ github.event.repository.name }} --network ${{ secrets.NETWORK }} --label "$HOST_LABEL" --label "$TLS_LABEL" --label "$CERT_LABEL"  ${{ github.repository }}
+          docker run -d --name ${{ github.event.repository.name }} --network ${{ secrets.NETWORK }} --label "$HOST_LABEL" --label "$TLS_LABEL" --label "$CERT_LABEL" --label "$ENABLE_LABEL"  ${{ github.repository }}
       - 
         name: Send discord failure message
         if: ${{ failure() }}
