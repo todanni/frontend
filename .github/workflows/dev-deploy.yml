@@ -72,7 +72,7 @@ jobs:
           GITHUB_USERNAME: danni-popova
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ## Traefik labels
-          HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`${{ secrets.DEV_HOSTNAME }}`) && PathPrefix(`/`)
+          HOST_LABEL: traefik.http.routers.${{ github.event.repository.name }}.rule=Host(`todanni.com`) && PathPrefix(`/`)
           TLS_LABEL: traefik.http.routers.${{ github.event.repository.name }}.tls=true
           CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}.tls.certresolver=letsencrypt
           ENABLE_LABEL: traefik.enable=true
