@@ -22,7 +22,7 @@ jobs:
           TLS_CERT_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.tls.certresolver=letsencrypt
           TLS_LABEL: traefik.http.routers.${{ github.event.repository.name }}-tls.tls=true
        with:
-        host: ${{ secrets.PROD_DO_DROPLET_IP }}
+        host: ${{ secrets.DROPLET_IP }}
         username: root
         key: ${{ secrets.ADMIN_SSH_KEY }}
         envs:  HOST_LABEL,MIDDLEWARE_LABEL,TLS_HOST_LABEL,TLS_CERT_LABEL,TLS_LABEL
