@@ -1,5 +1,5 @@
 # Stage 0, "build-stage", based on Node.js to build the frontend
-FROM node:alpine as build
+FROM node:16.17-alpine as build
 WORKDIR /app
 COPY package*.json /app/
 RUN yarn cache clean && yarn --update-checksum
